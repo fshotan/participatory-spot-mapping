@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import type { Map as MlMap, Marker, MapMouseEvent } from "maplibre-gl";
 import type { Place } from "@/lib/places";
 
@@ -19,7 +20,13 @@ type Sheet =
   | { kind: "list" }
   | { kind: "edit"; place: Place };
 
-export default function MapView({ userEmail }: { userEmail: string }) {
+export default function MapView({
+  userEmail,
+  isAdmin,
+}: {
+  userEmail: string;
+  isAdmin: boolean;
+}) {
   const router = useRouter();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MlMap | null>(null);
@@ -32,6 +39,7 @@ export default function MapView({ userEmail }: { userEmail: string }) {
   const [mapReady, setMapReady] = useState(false);
   const [addMode, setAddMode] = useState(false);
   const [sheet, setSheet] = useState<Sheet>({ kind: "closed" });
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const addModeRef = useRef(addMode);
   const placesCountRef = useRef(0);
@@ -192,11 +200,45 @@ export default function MapView({ userEmail }: { userEmail: string }) {
           <button className="icon-btn" onClick={() => setSheet({ kind: "list" })}>
             一覧
           </button>
-          <button className="icon-btn" onClick={handleLogout}>
-            ログアウト
+          <button
+            className="icon-btn menu-btn"
+            aria-label="メニュー"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span className="menu-icon" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
           </button>
         </div>
       </div>
+
+      {menuOpen && (
+        <>
+          <div className="menu-backdrop" onClick={() => setMenuOpen(false)} />
+          <nav className="menu-dropdown">
+            <Link href="/about" className="menu-item" onClick={() => setMenuOpen(false)}>
+              このアプリについて
+            </Link>
+            {isAdmin && (
+              <Link href="/admin" className="menu-item" onClick={() => setMenuOpen(false)}>
+                管理
+              </Link>
+            )}
+            <button
+              className="menu-item menu-item-danger"
+              onClick={() => {
+                setMenuOpen(false);
+                handleLogout();
+              }}
+            >
+              ログアウト
+            </button>
+          </nav>
+        </>
+      )}
 
       <div ref={mapContainerRef} className="map-container" />
 

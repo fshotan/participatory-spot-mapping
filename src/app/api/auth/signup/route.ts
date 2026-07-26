@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 import { z } from "zod";
 import { getDb } from "@/lib/db";
 import { createSession, hashPassword } from "@/lib/auth";
+import { roleForEmail } from "@/lib/user";
 
 const schema = z.object({
   email: z.string().trim().toLowerCase().email("有効なメールアドレスを入力してください"),
@@ -41,13 +42,14 @@ export async function POST(request: Request) {
 
   const id = randomUUID();
   const passwordHash = await hashPassword(password);
+  const role = roleForEmail(email);
 
   await db.execute({
-    sql: "INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)",
-    args: [id, email, passwordHash],
+    sql: "INSERT INTO users (id, email, password_hash, role) VALUES (?, ?, ?, ?)",
+    args: [id, email, passwordHash, role],
   });
 
   await createSession(id);
 
-  return NextResponse.json({ user: { id, email } }, { status: 201 });
+  return NextResponse.json({ user: { id, email, role } }, { status: 201 });
 }

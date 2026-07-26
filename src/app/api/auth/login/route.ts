@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/db";
 import { createSession, verifyPassword } from "@/lib/auth";
+import { syncUserRole } from "@/lib/user";
 
 const schema = z.object({
   email: z.string().trim().toLowerCase().email("有効なメールアドレスを入力してください"),
@@ -49,8 +50,9 @@ export async function POST(request: Request) {
   }
 
   await createSession(row.id as string);
+  const role = await syncUserRole(row.id as string, row.email as string);
 
   return NextResponse.json({
-    user: { id: row.id as string, email: row.email as string },
+    user: { id: row.id as string, email: row.email as string, role },
   });
 }
