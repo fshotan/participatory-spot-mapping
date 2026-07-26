@@ -8,19 +8,9 @@ import type { Place } from "@/lib/places";
 const DEFAULT_CENTER: [number, number] = [139.767, 35.681]; // Tokyo Station
 const DEFAULT_ZOOM = 12;
 
-const OSM_STYLE = {
-  version: 8 as const,
-  sources: {
-    osm: {
-      type: "raster" as const,
-      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-      tileSize: 256,
-      attribution:
-        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    },
-  },
-  layers: [{ id: "osm", type: "raster" as const, source: "osm" }],
-};
+// MapLibre vector style. OpenFreeMap "liberty" — free, no API key, full
+// street-level detail (MapLibre's own demotiles have no street data).
+const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 
 type Draft = { lng: number; lat: number };
 type Sheet =
@@ -79,7 +69,7 @@ export default function MapView({ userEmail }: { userEmail: string }) {
 
       const map = new maplibre.Map({
         container: mapContainerRef.current,
-        style: OSM_STYLE,
+        style: MAP_STYLE,
         center: DEFAULT_CENTER,
         zoom: DEFAULT_ZOOM,
         attributionControl: { compact: true },
