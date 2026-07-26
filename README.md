@@ -5,7 +5,7 @@
 ## 主な機能
 
 - メール + パスワードによるアカウント登録・ログイン
-- オープンソースの地図（[MapLibre GL JS](https://maplibre.org/) + [OpenStreetMap](https://www.openstreetmap.org/) タイル）
+- オープンソースの地図（[MapLibre GL JS](https://maplibre.org/) + [OpenFreeMap](https://openfreemap.org/) ベクタータイル。APIキー不要）
 - 地図の**長押し**、または「＋場所を追加」→タップで投稿地点を選択
 - 場所の属性：**名前** と **大事・好きな理由**
 - 登録すると**緯度・経度が自動で取得・記録**されます
@@ -18,7 +18,7 @@
 - [Next.js 14](https://nextjs.org/)（App Router）+ TypeScript
 - [Turso](https://turso.tech/) / [libSQL](https://github.com/tursodatabase/libsql)（`@libsql/client`）
 - 認証: パスワードハッシュ（`bcryptjs`）+ 署名付きセッション Cookie（`jose`）
-- 地図: `maplibre-gl` + OpenStreetMap ラスタータイル
+- 地図: `maplibre-gl` + OpenFreeMap「liberty」ベクタースタイル（APIキー不要）
 
 ## セットアップ
 
