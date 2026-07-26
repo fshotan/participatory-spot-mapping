@@ -5,5 +5,5 @@ import MapView from "@/components/MapView";
 export default async function MapPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  return <MapView userEmail={user.email} />;
+  return <MapView userEmail={user.email} isAdmin={user.role === "admin"} />;
 }

@@ -19,6 +19,7 @@ async function main() {
       id TEXT PRIMARY KEY,
       email TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'user',
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
   `);
@@ -39,6 +40,24 @@ async function main() {
   await db.execute(
     `CREATE INDEX IF NOT EXISTS idx_places_user_id ON places(user_id);`,
   );
+
+  // Add users.role (idempotent).
+  const columns = await db.execute(`PRAGMA table_info(users);`);
+  const hasRole = columns.rows.some((r) => r.name === "role");
+  if (!hasRole) {
+    await db.execute(
+      `ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'user';`,
+    );
+  }
+
+  // Key/value store for editable app content (e.g. the About page).
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS app_content (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
 
   console.log("Migration complete.");
 }
